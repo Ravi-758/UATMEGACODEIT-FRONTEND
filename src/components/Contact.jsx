@@ -6,11 +6,13 @@ export default function Contact() {
   const [status, setStatus] = useState(null);
   const [showCareers, setShowCareers] = useState(false);
 
+  // ✅ API Base URL — use 127.0.0.1 for local dev, your domain for prod
   const API_BASE =
     process.env.NODE_ENV === "production"
-      ? "https://megacodeit.com"
-      : "http://127.0.0.1:4000";
+      ? "https://megacodeit.com" // your live backend URL
+      : "http://127.0.0.1:4000"; // your local Express backend
 
+  // ✅ Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("📨 Sending...");
@@ -18,27 +20,25 @@ export default function Contact() {
     try {
       console.log("📤 Sending data:", form);
 
-      const res = await fetch(
-        `${API_BASE}/api/${showCareers ? "careers" : "contact"}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        }
-      );
+      const endpoint = `${API_BASE}/api/${showCareers ? "careers" : "contact"}`;
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
       const data = await res.json();
       console.log("Server response:", data);
 
       if (data.success) {
-        setStatus("Message sent successfully!");
+        setStatus("✅ Message sent successfully!");
         setForm({ name: "", email: "", message: "" });
       } else {
-        setStatus("Failed: " + data.message);
+        setStatus("❌ Failed: " + data.message);
       }
     } catch (err) {
       console.error("Fetch error:", err);
-      setStatus("Something went wrong.");
+      setStatus("❌ Something went wrong. Please try again.");
     }
   };
 
@@ -81,7 +81,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Forms */}
+        {/* Form */}
         {!showCareers ? (
           <form
             onSubmit={handleSubmit}
@@ -106,6 +106,7 @@ export default function Contact() {
                   className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
               <div className="flex flex-col items-center gap-4 mt-4">
                 <textarea
                   placeholder="Your Message..."
@@ -115,13 +116,27 @@ export default function Contact() {
                   required
                   className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+
                 <button
                   type="submit"
                   className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                 >
                   Send Message
                 </button>
-                {status && <p className="text-center mt-4">{status}</p>}
+
+                {status && (
+                  <p
+                    className={`text-center mt-4 ${
+                      status.includes("✅")
+                        ? "text-green-600"
+                        : status.includes("❌")
+                        ? "text-red-600"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {status}
+                  </p>
+                )}
               </div>
             </div>
           </form>

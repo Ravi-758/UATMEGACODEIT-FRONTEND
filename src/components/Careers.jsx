@@ -13,7 +13,7 @@ export default function Careers() {
         }
     };
     return (
-        <section id="careers" className="bg-gray-50">
+        <section id="careers" className="py-10 bg-gray-50">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md space-y-6" >
                     <div className="gap-6">
                         <div className="grid md:grid-cols-2 gap-4">
